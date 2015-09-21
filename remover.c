@@ -3,12 +3,12 @@
 #define BUFSIZE 1024
 //it might not work with lines longer than 1023 characters 
 // todo: error handling
-void remove(FILE *source, FILE *output) {
-  char buffer[BUFSIZE], copy[BUFSIZE]
+void rcom(FILE *source, FILE *output) {
+  char buffer[BUFSIZE], copy[BUFSIZE];
   char quote = 0;
   int comment = 0;
   
-  while (fgets(buffer, sizeof buffer, source) {
+  while (fgets(buffer, sizeof buffer, source)) {
     for (int i = 0; buffer[i]; ++i) {
       switch (buffer[i]) {
 	case '/' :
@@ -45,7 +45,7 @@ void remove(FILE *source, FILE *output) {
 	// This case is for characters like \" 
 	case '\\' :
 	  if (!comment) {
-	    copy[i] = buffer[i]
+	    copy[i] = buffer[i];
 	    ++i;
 	    copy[i] = buffer[i];
 	  }
