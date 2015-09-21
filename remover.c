@@ -1,19 +1,19 @@
-#define BUFSIZE 1024
-//it might not work with lines longer than 1000 characters 
+#include <stdio.h>
 
-void remove(FILE *source, FILE, output) {
+#define BUFSIZE 1024
+//it might not work with lines longer than 1023 characters 
+// todo: error handling
+void remove(FILE *source, FILE *output) {
   char buffer[BUFSIZE], copy[BUFSIZE]
   char quote = 0;
-  int comment = 0, inline_com;
+  int comment = 0;
   
   while (fgets(buffer, sizeof buffer, source) {
-    inline_com = 0;
-    for (int i = 0; buffer[i] && !inline_com; ++i) {
+    for (int i = 0; buffer[i]; ++i) {
       switch (buffer[i]) {
 	case '/' :
 	  if (!comment && !quote) {
 	    if (buffer[i+1] == '/') {
-	      inline_com = 1;
 	      copy[i] = '\n';
 	      // why fill with zeros ??
 	    }
@@ -44,24 +44,17 @@ void remove(FILE *source, FILE, output) {
 	  
 	// This case is for characters like \" 
 	case '\\' :
-	  if (comment) break;
-	  else {
+	  if (!comment) {
 	    copy[i] = buffer[i]
 	    ++i;
 	    copy[i] = buffer[i];
-	    break;
+	  }
+	  break;
 	  
 	default:
 	  if (!comment) copy[i] = buffer[i];
       }
     }
-	  
-	
-	  
-
-	
-	 
-	
-    
-  
-  
+    fputs(copy, output); // si escriu mes del comptes es posa un \0 al final i ja esta
+  }
+}
