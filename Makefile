@@ -4,14 +4,14 @@ CFLAGS = -O2 -Wall -std=c99
 
 all: rcom
 
-rcom: main.o remover.o
-	$(CC) $(CFLAGS) -o rcom main.o remover.o
+rcom: main.o rcom.o
+	$(CC) $(CFLAGS) -o rcom main.o rcom.o
 	
 main.o: main.c 
 	$(CC) $(CFLAGS) -c main.c
 	
-remover.o: remover.c
-	$(CC) $(CFLAGS) -c remover.c
+rcom.o: rcom.c
+	$(CC) $(CFLAGS) -c rcom.c
 	
 clean: 
-	rm rcom main.o remover.o
+# 	rm rcom main.o rcom.o
