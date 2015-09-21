@@ -6,17 +6,18 @@
 void rcom(FILE *source, FILE *output) {
   char buffer[BUFSIZE], copy[BUFSIZE];
   char quote = 0;
-  int comment = 0;
+  int comment = 0, i, finish;
   
   while (fgets(buffer, sizeof buffer, source)) {
-    for (int i = 0; buffer[i]; ++i) {
+    for (i = 0, finish = 0; !finish; ++i) {
       switch (buffer[i]) {
+	case '\n' :
+	  finish = 1;
+	  break;
+	
 	case '/' :
 	  if (!comment && !quote) {
-	    if (buffer[i+1] == '/') {
-	      copy[i] = '\n';
-	      // why fill with zeros ??
-	    }
+	    if (buffer[i+1] == '/') finish = 1;
 	    else if (buffer[i+1] == '*') {
 	      comment = 1;
 	      ++i;
@@ -40,6 +41,7 @@ void rcom(FILE *source, FILE *output) {
 	  if (comment) break;
 	  if (!quote) quote = buffer[i];
 	  else if (quote == buffer[i]) quote = 0;
+	  copy[i] = buffer[i];
 	  break;
 	  
 	// This case is for characters like \" 
@@ -55,6 +57,8 @@ void rcom(FILE *source, FILE *output) {
 	  if (!comment) copy[i] = buffer[i];
       }
     }
+    copy[i-1] = '\n';
+    copy[i] = '\0';
     fputs(copy, output); // si escriu mes del comptes es posa un \0 al final i ja esta
   }
 }
