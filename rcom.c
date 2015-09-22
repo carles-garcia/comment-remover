@@ -1,9 +1,9 @@
-#include <stdio.h>
-
+#include "rcom.h"
 #define BUFSIZE 1024
+
 //it might not work with lines longer than 1023 characters 
 // todo: error handling
-void rcom(FILE *source, FILE *output) {
+void rcom(FILE *source, FILE *output, int inlin, int block) {
   char buffer[BUFSIZE], copy[BUFSIZE];
   char quote = 0;
   int comment = 0, i, finish;

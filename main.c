@@ -1,14 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <argp.h>
+#include "rcom.h"
 
 #define TMPFILE "rcom_temp"
 
-void rcom(FILE *source, FILE *output);
+const char *argp_program_version = "rcom version 1.0.0";
+const char *argp_program_bug_address = "https://github.com/carles-garcia/comment-remover/issues";
+static char doc[] = "rcom -- a utility to remove comments from source code files";
+
+struct arguments {
+  FILE *in, *out;
+  int inlin, block;
+}
+
+
 
 void usage() {
-  const char* msg =
-  "usage: rcom [-options] sourcefile [outputfile]\n"
-  + "If outputfile is not specified, sourcefile is overwritten\n";
+  const char *msg =
+  "usage: rcom c|c++|java|any [-options] [sourcefile] [outputfile]\n"
+  + "If outputfile is not specified, sourcefile is overwritten\n"
+  + "If neither sourcefile nor outpufile are specified, stdin and stdout are used\n";
   fprintf(stderr, msg);
   exit(EXIT_FAILURE);
 }
@@ -18,10 +30,14 @@ void eperror(char *msg) {
   exit(EXIT_FAILURE);
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
   int overwrite = 0;
   char *in = argv[1]; //input path
   char *out = argv[2];
+
+  struct arguments arguments;
+  arguments.in = arguments.out = "-";
+  arguments.inlin = arguments.block = 0;
   
   // FIFO
   if (argc == 1) {
@@ -46,7 +62,7 @@ int main(int argc, char* argv[]) {
       eperror(out);
   }
   
-  rcom(source, output);
+  rcom(arguments);
   if (fclose(source) != 0) eperror(in);
   if (fclose(output) != 0) eperror(out)
   if (overwrite) {
