@@ -3,7 +3,7 @@
 
 //it might not work with lines longer than 1023 characters 
 // todo: error handling
-void rcom(FILE *source, FILE *output, int inlin, int block) {
+void rcom(FILE *source, FILE *output, int lang, struct options *opts) {
   char buffer[BUFSIZE], copy[BUFSIZE];
   char quote = 0;
   int comment = 0, i, finish;
@@ -11,19 +11,35 @@ void rcom(FILE *source, FILE *output, int inlin, int block) {
   while (fgets(buffer, sizeof buffer, source)) {
     for (i = 0, finish = 0; !finish; ++i) {
       switch (buffer[i]) {
+	// case '\0' , si no va lultima linia append un \n al final de cada fitxer
 	case '\n' :
 	  finish = 1;
 	  break;
 	
 	case '/' :
-	  if (!comment && !quote) {
-	    if (buffer[i+1] == '/') finish = 1;
+	  if (quote) copy[i] = buffer[i];
+	  else if (!comment) {
+	    if (opts->inlin && buffer[i+1] == '/') finish = 1;
 	    else if (buffer[i+1] == '*') {
-	      comment = 1;
-	      ++i;
+	      if (opts->jdoc && buffer[i+2] == '*') {
+		comment = 1;
+		i += 2;
+	      }
+	      else if (opts->block) {
+		if (buffer[i+2] == '*') {
+		  copy[i] = buffer[i];
+		  ++i;
+		  copy[i] = buffer[i];
+		  ++i;
+		  copy[i] = buffer[i];
+		}
+		else {
+		  comment = 1;
+		  ++i;
+		}
+	      }
 	    }
-	  }
-	  else copy[i] = buffer[i];
+	  } 
 	  break;
 	
 	case '*' :

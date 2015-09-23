@@ -6,7 +6,7 @@
 
 #define TMPFILE "rcom_temp"
 
-const char *argp_program_version = "rcom version 1.0.0";
+const char *argp_program_version = "rcom v1.0.0";
 const char *argp_program_bug_address = "https://github.com/carles-garcia/comment-remover/issues";
 static char doc[] = 
 "rcom -- a utility to remove comments and documentation from source code files";
@@ -87,28 +87,28 @@ int main(int argc, char *argv[]) {
   
   argp_parse(&argp, argc, argv, 0, 0, &args);
   
-  if ((lang = check_language(args.lang) < 0)) eperror("Wrong language"); //TODO
+  if ((lang = check_language(args.lang) < 0)) eperror("Wrong language"); 
   
   struct options opts;
   // get just the necessary options to avoid passing unnecessary strings to the stack
-  getOptions(&args, &opts); //TODO
+  getOptions(&args, &opts); 
   
-  if (args.arg_num == 2) rcom(stdin, stdout, lang, opts); // FIFO
+  if (args.arg_num == 2) rcom(stdin, stdout, lang, &opts); // FIFO
   else {
     for (int i = 0; args.files[i]; ++i) {
-      FILE* source, output;
+      FILE *source, *output;
       if ((source = fopen(args.files[i], "r")) == NULL) 
 	eperror(args.files[i]);
       
       if ((output = fopen(TMPFILE, "w")) == NULL) 
 	eperror("Can't create temporal file");
     
-      rcom(source, output, lang, opts);
+      rcom(source, output, lang, &opts);
       
       if (fclose(source) != 0) eperror(args.files[i]);
-      if (fclose(output) != 0) eperror("Can't close temporal file")
+      if (fclose(output) != 0) eperror("Can't close temporal file");
       
-      if (rename(args.files[i], strcat(args.files[i],"~") < 0) eperror("Can't rename original file");
+      if (rename(args.files[i], strcat(args.files[i],"~") < 0)) eperror("Can't rename original file");
       if (rename(TMPFILE, args.files[i]) < 0) eperror("Can't rename temporal file");
     }
   }

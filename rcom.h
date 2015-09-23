@@ -1,3 +1,4 @@
 #include <stdio.h>
+#include "parsing.h"
 
-void rcom(FILE *source, FILE *output, int inlin, int block);
+void rcom(FILE *source, FILE *output, int lang, struct options *opts);
