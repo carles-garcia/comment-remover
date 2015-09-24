@@ -1,15 +1,5 @@
 #include "parsing.h"
 
-struct arguments {
-  char *lang;
-  int verb, inlin, block, jdoc, doxy, arg_num;
-  char **files;
-};
-
-struct options {
-  int verb, inlin, block, jdoc, doxy;
-};
-
 int check_language(char *lang) {
   if (strcmp(lang, "c") == 0) return C;
   if (strcmp(lang, "c++") == 0) return C;

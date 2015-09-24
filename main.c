@@ -81,35 +81,35 @@ void eperror(char *msg) {
 int main(int argc, char *argv[]) {
   int lang;
     
-  struct arguments args;
-  args.verb = args.inlin = args.block = 0; 
-  args.jdoc = args.doxy = 0;
+  struct arguments *args;
+  args->verb = args->inlin = args->block = 0; 
+  args->jdoc = args->doxy = 0;
   
-  argp_parse(&argp, argc, argv, 0, 0, &args);
+  argp_parse(&argp, argc, argv, 0, 0, args);
   
-  if ((lang = check_language(args.lang) < 0)) eperror("Wrong language"); 
+  if ((lang = check_language(args->lang) < 0)) eperror("Wrong language"); 
   
-  struct options opts;
+  struct options *opts;
   // get just the necessary options to avoid passing unnecessary strings to the stack
-  getOptions(&args, &opts); 
+  getOptions(args, opts); 
   
-  if (args.arg_num == 2) rcom(stdin, stdout, lang, &opts); // FIFO
+  if (args->arg_num == 2) rcom(stdin, stdout, lang, opts); // FIFO
   else {
-    for (int i = 0; args.files[i]; ++i) {
+    for (int i = 0; args->files[i]; ++i) {
       FILE *source, *output;
-      if ((source = fopen(args.files[i], "r")) == NULL) 
-	eperror(args.files[i]);
+      if ((source = fopen(args->files[i], "r")) == NULL) 
+	eperror(args->files[i]);
       
       if ((output = fopen(TMPFILE, "w")) == NULL) 
 	eperror("Can't create temporal file");
     
-      rcom(source, output, lang, &opts);
+      rcom(source, output, lang, opts);
       
-      if (fclose(source) != 0) eperror(args.files[i]);
+      if (fclose(source) != 0) eperror(args->files[i]);
       if (fclose(output) != 0) eperror("Can't close temporal file");
       
-      if (rename(args.files[i], strcat(args.files[i],"~") < 0)) eperror("Can't rename original file");
-      if (rename(TMPFILE, args.files[i]) < 0) eperror("Can't rename temporal file");
+      if (rename(args->files[i], strcat(args->files[i],"~")) < 0) eperror("Can't rename original file");
+      if (rename(TMPFILE, args->files[i]) < 0) eperror("Can't rename temporal file");
     }
   }
   
