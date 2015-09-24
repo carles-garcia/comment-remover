@@ -2,16 +2,21 @@
 #define BUFSIZE 1024
 
 //it might not work with lines longer than 1023 characters 
-// todo: error handling
 void rcom(FILE *source, FILE *output, int lang, struct options *opts) {
   char buffer[BUFSIZE], copy[BUFSIZE];
   char quote = 0;
-  int comment = 0, i, finish;
+  int comment = 0, i, finish, white;
   
+  // TODO white, doxy
   while (fgets(buffer, sizeof buffer, source)) {
-    for (i = 0, finish = 0; !finish; ++i) {
+    for (i = 0, finish = 0, white = 1; !finish; ++i) { 
+      /* Warning: this doesn't work if last line doesn't end wih \n,
+       * however according to POSIX all text files you end with it.
+       * Tools like cat & grep don't work without \n in the last line neither.
+       * A solution would be adding a case '\0' and append a \n to the EOF.
+       */
       switch (buffer[i]) {
-	// case '\0' , si no va lultima linia append un \n al final de cada fitxer
+	
 	case '\n' :
 	  finish = 1;
 	  break;

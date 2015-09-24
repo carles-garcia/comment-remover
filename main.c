@@ -4,7 +4,7 @@
 #include "rcom.h"
 #include "parsing.h"
 
-#define TMPFILE "rcom_temp"
+#define TMPFILE ".rcom_temp"
 
 const char *argp_program_version = "rcom v1.0.0";
 const char *argp_program_bug_address = "https://github.com/carles-garcia/comment-remover/issues";
@@ -18,7 +18,7 @@ static struct argp_option options[] = {
   {"inline", 'i', 0, 0, "Remove inline comments"},
   {"block", 'b', 0, 0, "Remove block comments"},
   {"javadoc", 'j', 0, 0, "Remove javadoc comments"},
-  {"doxygen", 'd', 0, 0, "Remove doxygen comments"},
+  //{"doxygen", 'd', 0, 0, "Remove doxygen comments"}, NOT IMPLEMENTED
   {0}
 };
 
@@ -113,8 +113,12 @@ int main(int argc, char *argv[]) {
       char newname[strlen(filename)];
       strcpy(newname, filename);
       strcat(newname,"~"); // strcat modifies first parameter !!!
-      if (rename(filename, newname) < 0) eperror("Can't rename original file"); //backup
+      // backup the original file. Rename overwrites the newname file if it exists
+      if (rename(filename, newname) < 0) eperror("Can't rename original file"); 
       if (rename(TMPFILE, filename) < 0) eperror("Can't rename temporal file");
+      
+      if (opts.verb) 
+	fprintf(stderr, "Comments successfully removed from %s. Backup file %s~ created\n", filename, filename);
     
     }
   }

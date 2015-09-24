@@ -1,6 +1,6 @@
 
 CC = gcc
-CFLAGS = -g -Wall -std=c99
+CFLAGS = -g -O2 -Wall -std=c99
 
 all: rcom
 
