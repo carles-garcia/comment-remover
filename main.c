@@ -96,28 +96,25 @@ int main(int argc, char *argv[]) {
   if (args.arg_num == 1) rcom(stdin, stdout, lang, &opts); // FIFO
   else {
     for (int i = 0; args.files[i]; ++i) {
+      char *filename = args.files[i];
+      
       FILE *source, *output;
-      if ((source = fopen(args.files[i], "r")) == NULL) 
-	eperror(args.files[i]);
+      if ((source = fopen(filename, "r")) == NULL) 
+	eperror(filename);
       
       if ((output = fopen(TMPFILE, "w")) == NULL) 
 	eperror("Can't create temporal file");
     
       rcom(source, output, lang, &opts);
       
-      if (fclose(source) != 0) eperror(args.files[i]);
+      if (fclose(source) != 0) eperror(filename);
       if (fclose(output) != 0) eperror("Can't close temporal file");
       
-     // if (rename(args.files[i], strcat(args.files[i],"~")) < 0) eperror("Can't rename original file");
-     // if (rename(TMPFILE, args.files[i]) < 0) eperror("Can't rename temporal file");
-      printf("maincp.c\n");
-      printf("%s\n", args.files[i]);
-      if (strcmp("maincp.c",args.files[i]) !=0) printf("diferents\n");
-      char *newname = strcat(args.files[i],"~");
-      if (rename(args.files[i], newname) < 0) eperror("Can't rename original file");
-      
-     // if (rename("maincp.c", "maincp.c~") < 0) eperror("Can't rename original file");
-      // if (rename(TMPFILE, "maincp.c") < 0) eperror("Can't rename temporal file");
+      char newname[strlen(filename)];
+      strcpy(newname, filename);
+      strcat(newname,"~"); // strcat modifies first parameter !!!
+      if (rename(filename, newname) < 0) eperror("Can't rename original file"); //backup
+      if (rename(TMPFILE, filename) < 0) eperror("Can't rename temporal file");
     
     }
   }
