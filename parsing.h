@@ -7,12 +7,12 @@
 
 struct arguments {
   char *lang;
-  int verb, inlin, block, jdoc, doxy, arg_num;
+  int verb, inlin, block, jdoc, doxy, empty, arg_num;
   char **files;
 };
 
 struct options {
-  int verb, inlin, block, jdoc, doxy;
+  int verb, inlin, block, jdoc, doxy, empty;
 };
 
 int check_language(char *lang);

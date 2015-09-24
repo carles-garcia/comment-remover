@@ -15,9 +15,11 @@ static char args_doc[] = "LANGUAGE [FILE...]";
 
 static struct argp_option options[] = {
   {"verbose", 'v', 0, 0, "Produce verbose output"},
+  {"all", 'a', 0, 0, "Remove all types of comments"},
   {"inline", 'i', 0, 0, "Remove inline comments"},
   {"block", 'b', 0, 0, "Remove block comments"},
   {"javadoc", 'j', 0, 0, "Remove javadoc comments"},
+  {"empty-lines", 'e', 0, 0, "Replace comment only lines with empty lines"},
   //{"doxygen", 'd', 0, 0, "Remove doxygen comments"}, NOT IMPLEMENTED
   {0}
 };
@@ -29,6 +31,9 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
     case 'v' :
       arguments->verb = 1;
       break;
+    case 'a' :
+      arguments->inlin = arguments->block = 1;
+      arguments->jdoc = arguments->doxy = 1; // exclusive...
     case 'i' :
       arguments->inlin = 1;
       break;
@@ -41,6 +46,10 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
     case 'd' :
       arguments->doxy = 1;
       break;
+    case 'e' :
+      arguments->empty = 1;
+      break;
+      
     case ARGP_KEY_ARG :
       /* Here we know that state->arg_num == 0, since we
        f orce argument parsing *to end before any more arguments can
@@ -82,7 +91,7 @@ int main(int argc, char *argv[]) {
       
   struct arguments args;
   args.verb = args.inlin = args.block = 0; 
-  args.jdoc = args.doxy = 0;
+  args.jdoc = args.doxy = args.empty = 0;
   
   argp_parse(&argp, argc, argv, 0, 0, &args);
   

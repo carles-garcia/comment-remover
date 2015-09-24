@@ -13,5 +13,6 @@ void getOptions(struct arguments *args, struct options *opts) {
   opts->block = args->block;
   opts->jdoc = args->jdoc;
   opts->doxy = args->doxy;
+  opts->empty = args->empty;
 }
   

@@ -100,6 +100,10 @@ void rcom(FILE *source, FILE *output, int lang, struct options *opts) {
       copy[i] = '\0';
       fputs(copy, output);
     }
-     
+    else if (opts->empty) {
+      copy[0] = '\n';
+      copy[1] = '\0';
+      fputs(copy, output);
+    }
   }
 }
