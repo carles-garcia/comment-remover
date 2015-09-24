@@ -7,7 +7,7 @@ void rcom(FILE *source, FILE *output, int lang, struct options *opts) {
   char quote = 0;
   int comment = 0, i, finish, white;
   
-  // TODO white, doxy
+  // TODO doxy
   while (fgets(buffer, sizeof buffer, source)) {
     for (i = 0, finish = 0, white = 1; !finish; ++i) { 
       /* Warning: this doesn't work if last line doesn't end wih \n,
@@ -32,6 +32,7 @@ void rcom(FILE *source, FILE *output, int lang, struct options *opts) {
 	      }
 	      else if (opts->block) {
 		if (buffer[i+2] == '*') {
+		  white = 0;
 		  copy[i] = buffer[i];
 		  ++i;
 		  copy[i] = buffer[i];
@@ -54,20 +55,27 @@ void rcom(FILE *source, FILE *output, int lang, struct options *opts) {
 	      ++i;
 	    }
 	  }
-	  else copy[i] = buffer[i];
+	  else {
+	    white = 0;
+	    copy[i] = buffer[i];
+	  }
 	  break;
 	
 	case '\"' :
 	case '\'' :
 	  if (comment) break;
-	  if (!quote) quote = buffer[i];
+	  if (!quote) {
+	    white = 0;
+	    quote = buffer[i];
+	  }
 	  else if (quote == buffer[i]) quote = 0;
 	  copy[i] = buffer[i];
 	  break;
 	  
 	// This case is for characters like \" 
-	case '\\' :
+	case '\\' : // review escape sequences... is it necessary
 	  if (!comment) {
+	    white = 0;
 	    copy[i] = buffer[i];
 	    ++i;
 	    copy[i] = buffer[i];
@@ -75,11 +83,20 @@ void rcom(FILE *source, FILE *output, int lang, struct options *opts) {
 	  break;
 	  
 	default:
-	  if (!comment) copy[i] = buffer[i];
+	  if (!comment) {
+	    if (!isspace(buffer[i])) white = 0;
+	    copy[i] = buffer[i];
+	  }
       }
     }
-    copy[i-1] = '\n';
-    copy[i] = '\0';
+    if (white) {
+      copy[0] = '\n';
+      copy[1] = '\0';
+    }
+    else {
+      copy[i-1] = '\n';
+      copy[i] = '\0';
+    }
     fputs(copy, output); 
   }
 }
