@@ -11,7 +11,7 @@ const char *argp_program_bug_address = "https://github.com/carles-garcia/comment
 static char doc[] = 
 "rcom -- a utility to remove comments and documentation from source code files";
 
-static char args_doc[] = "rcom LANGUAGE [OPTION...] [FILE...]";
+static char args_doc[] = "LANGUAGE [FILE...]";
 
 static struct argp_option options[] = {
   {"verbose", 'v', 0, 0, "Produce verbose output"},
@@ -61,7 +61,7 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
       state->next = state->argc;
       break;
     case ARGP_KEY_END :
-      if (state->arg_num < 2) argp_usage(state);
+      if (state->arg_num < 1) argp_usage(state);
       arguments->arg_num = state->arg_num;
       break;
     default:
@@ -79,37 +79,46 @@ void eperror(char *msg) {
 
 
 int main(int argc, char *argv[]) {
+      
+  struct arguments args;
+  args.verb = args.inlin = args.block = 0; 
+  args.jdoc = args.doxy = 0;
+  
+  argp_parse(&argp, argc, argv, 0, 0, &args);
+  
   int lang;
-    
-  struct arguments *args;
-  args->verb = args->inlin = args->block = 0; 
-  args->jdoc = args->doxy = 0;
+  if ((lang = check_language(args.lang) < 0)) eperror("Wrong language"); 
   
-  argp_parse(&argp, argc, argv, 0, 0, args);
-  
-  if ((lang = check_language(args->lang) < 0)) eperror("Wrong language"); 
-  
-  struct options *opts;
+  struct options opts;
   // get just the necessary options to avoid passing unnecessary strings to the stack
-  getOptions(args, opts); 
+  getOptions(&args, &opts); 
   
-  if (args->arg_num == 2) rcom(stdin, stdout, lang, opts); // FIFO
+  if (args.arg_num == 1) rcom(stdin, stdout, lang, &opts); // FIFO
   else {
-    for (int i = 0; args->files[i]; ++i) {
+    for (int i = 0; args.files[i]; ++i) {
       FILE *source, *output;
-      if ((source = fopen(args->files[i], "r")) == NULL) 
-	eperror(args->files[i]);
+      if ((source = fopen(args.files[i], "r")) == NULL) 
+	eperror(args.files[i]);
       
       if ((output = fopen(TMPFILE, "w")) == NULL) 
 	eperror("Can't create temporal file");
     
-      rcom(source, output, lang, opts);
+      rcom(source, output, lang, &opts);
       
-      if (fclose(source) != 0) eperror(args->files[i]);
+      if (fclose(source) != 0) eperror(args.files[i]);
       if (fclose(output) != 0) eperror("Can't close temporal file");
       
-      if (rename(args->files[i], strcat(args->files[i],"~")) < 0) eperror("Can't rename original file");
-      if (rename(TMPFILE, args->files[i]) < 0) eperror("Can't rename temporal file");
+     // if (rename(args.files[i], strcat(args.files[i],"~")) < 0) eperror("Can't rename original file");
+     // if (rename(TMPFILE, args.files[i]) < 0) eperror("Can't rename temporal file");
+      printf("maincp.c\n");
+      printf("%s\n", args.files[i]);
+      if (strcmp("maincp.c",args.files[i]) !=0) printf("diferents\n");
+      char *newname = strcat(args.files[i],"~");
+      if (rename(args.files[i], newname) < 0) eperror("Can't rename original file");
+      
+     // if (rename("maincp.c", "maincp.c~") < 0) eperror("Can't rename original file");
+      // if (rename(TMPFILE, "maincp.c") < 0) eperror("Can't rename temporal file");
+    
     }
   }
   
