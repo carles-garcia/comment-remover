@@ -119,7 +119,7 @@ int main(int argc, char *argv[]) {
       if (fclose(source) != 0) eperror(filename);
       if (fclose(output) != 0) eperror("Can't close temporal file");
       
-      char newname[strlen(filename)];
+      char newname[strlen(filename)+1]; 
       strcpy(newname, filename);
       strcat(newname,"~"); // strcat modifies first parameter !!!
       // backup the original file. Rename overwrites the newname file if it exists

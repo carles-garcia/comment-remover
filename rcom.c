@@ -1,4 +1,6 @@
 #include "rcom.h"
+
+#include <ctype.h> //isspace
 #define BUFSIZE 1024
 
 //it might not work with lines longer than 1023 characters 
