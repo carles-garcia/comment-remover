@@ -51,7 +51,9 @@ void rcom(FILE *source, FILE *output, int lang, struct options *opts) {
 		  has_com = 1;
 		}
 	      }
+	      else copy[i] = buffer[i];
 	    }
+	    else copy[i] = buffer[i];
 	  } 
 	  break;
 	
