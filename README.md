@@ -1,7 +1,7 @@
 # rcom
 A utility to remove comments and documentation from source code files
 
-To know how to use it type ```rcom --help```
+To learn how to use it type ```rcom --help```
 
 It works officially with C, C++ and Java. It probably works too with any language that has the same type of comments.
 
