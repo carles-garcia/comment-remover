@@ -1,3 +1,13 @@
+/*
+ * The C language standard says a source file that is not empty shall end 
+ * in a new-line character, which shall not be immediately preceded by a
+ * backslash character.
+ * 
+ * Note: If there's a backslash-newline parsing might fail in rare cases.
+ * The solution would be analyze char by char, or check if last character -2 == '\\'
+ * 
+ */
+
 #include "rcom.h"
 
 void rcom(FILE *source, FILE *output, struct arguments *opts) {
@@ -15,17 +25,6 @@ void rcom(FILE *source, FILE *output, struct arguments *opts) {
     int has_com = comment; // Does this line have a comment?
     int i;
     for (i = 0; !finished; ++i) { 
-      /* Warning: this doesn't work if last line doesn't end wih \n,
-       * however according to POSIX all text files you end with it.
-       * Tools like cat & grep don't work without \n in the last line neither.
-       * A solution would be adding a case '\0' and append a \n to the EOF.
-       * 
-       * The C language standard says A source file that is not empty shall end 
-       * in a new-line character, which shall not be immediately preceded by a
-       * backslash character.
-       * 
-       * 
-       */
       switch (buffer[i]) {
 	case '\n' :
 	  finished = 1;
@@ -88,7 +87,7 @@ void rcom(FILE *source, FILE *output, struct arguments *opts) {
 	  else if (quote == buffer[i]) quote = 0;
 	  copy[i] = buffer[i];
 	  break;
-	// backslash newline may fail. The solution would be analyze char by char
+	
 	default:
 	  if (!comment) {
 	    if (!isspace(buffer[i])) white = 0;
@@ -96,7 +95,7 @@ void rcom(FILE *source, FILE *output, struct arguments *opts) {
 	  }
       }
     }
-    //if (white && !has_com && !comment) white = 0;
+    
     // If this line has only white space but doesn't have a removed comment keep it
     if (white && !has_com) white = 0;
     if (!white) {

@@ -5,9 +5,7 @@
 #include "rcom.h"
 #include "parsing.h"
 
-#define TMPFILE ".rcom_temp"
-
-const char *argp_program_version = "rcom v1.0.0";
+const char *argp_program_version = "rcom v1.1.0";
 const char *argp_program_bug_address = "https://github.com/carles-garcia/comment-remover/issues";
 static char doc[] = 
 "rcom -- a utility to remove comments and documentation from source code files";
@@ -53,12 +51,12 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
       
     case ARGP_KEY_ARG :
       /* Here we know that state->arg_num == 0, since we
-       f orce argument parsing *to end before any more arguments can
+       force argument parsing to end before any more arguments can
        get here. */
       if ((arguments->language = check_language(arg)) < 0) eperror("Wrong language"); 
       
       /* Now we consume all the rest of the arguments.
-       s tate->next is the inde*x in state->argv of the
+       state->next is the index in state->argv of the
        next argument to be parsed, which is the first string
        we’re interested in, so we can just use
        &state->argv[state->next] as the value for
@@ -96,23 +94,26 @@ int main(int argc, char *argv[]) {
       if ((source = fopen(filename, "r")) == NULL) 
 	eperror(filename);
       
-      if ((output = fopen(TMPFILE, "w")) == NULL)  //will it create it to working directory or executable path?
-	eperror("Can't create temporal file");
+      char *tmpname = "/tmp/XXXXXX";
+      int fd = mkstemp(tmpname); //permissions 0600
+      if (fd == -1) eperror("Failed to create temporary file");
+      if ((output = fdopen(fd, "w")) == NULL) 
+	eperror("Can't create temporary file stream");
     
       rcom(source, output, &args);
       
       if (fclose(source) != 0) eperror(filename);
       if (fclose(output) != 0) eperror("Can't close temporal file");
       
-      char newname[strlen(filename)+1]; 
+      char newname[strlen(filename)+2]; // '~' and '\0' 
       strcpy(newname, filename);
       strcat(newname,"~"); // strcat modifies first parameter !!!
       // backup the original file. Rename overwrites the newname file if it exists
       if (rename(filename, newname) < 0) eperror("Can't rename original file"); 
-      if (rename(TMPFILE, filename) < 0) eperror("Can't rename temporal file");
+      if (rename(tmpname, filename) < 0) eperror("Can't rename temporary file");
       
       if (args.verbose) 
-	fprintf(stderr, "Comments successfully removed from %s. Backup file %s~ created\n", filename, filename);
+	fprintf(stderr, "Comments successfully removed from %s. Backup file %s created\n", filename, newname);
     }
     fprintf(stderr, "Done.\n");
   }
