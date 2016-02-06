@@ -1,9 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <argp.h>
+#include <limits.h>
 
 #include "rcom.h"
 #include "parsing.h"
+
+#define TMPFILE ".rcom_temp"
 
 const char *argp_program_version = "rcom v1.1.0";
 const char *argp_program_bug_address = "https://github.com/carles-garcia/comment-remover/issues";
@@ -94,16 +97,19 @@ int main(int argc, char *argv[]) {
       if ((source = fopen(filename, "r")) == NULL) 
 	eperror(filename);
       
-      char *tmpname = "/tmp/XXXXXX";
-      int fd = mkstemp(tmpname); //permissions 0600
-      if (fd == -1) eperror("Failed to create temporary file");
-      if ((output = fdopen(fd, "w")) == NULL) 
-	eperror("Can't create temporary file stream");
+      char *resolved_path = realpath(filename, NULL);
+      if (resolved_path == NULL) eperror("Failed to obtain path");
+      char tmpname[strlen(resolved_path) + strlen(TMPFILE) + 1];
+      strcpy(tmpname, resolved_path);
+      strcat(tmpname, TMPFILE);
+      free(resolved_path);
+      if ((output = fopen(tmpname, "w")) == NULL) //if exists it will be truncated
+	eperror("Can't create temporal file");
     
       rcom(source, output, &args);
       
       if (fclose(source) != 0) eperror(filename);
-      if (fclose(output) != 0) eperror("Can't close temporal file");
+      if (fclose(output) != 0) eperror(tmpname);
       
       char newname[strlen(filename)+2]; // '~' and '\0' 
       strcpy(newname, filename);
