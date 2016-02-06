@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <argp.h>
+
 #include "rcom.h"
 #include "parsing.h"
 
@@ -11,7 +12,7 @@ const char *argp_program_bug_address = "https://github.com/carles-garcia/comment
 static char doc[] = 
 "rcom -- a utility to remove comments and documentation from source code files";
 
-static char args_doc[] = "LANGUAGE [FILE...]";
+static char args_doc[] = "c|c++|java [FILE...]";
 
 static struct argp_option options[] = {
   {"verbose", 'v', 0, 0, "Produce verbose output"},
@@ -29,7 +30,7 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
   
   switch (key) {
     case 'v' :
-      arguments->verb = 1;
+      arguments->verbose = 1;
       break;
     case 'a' :
       arguments->inlin = arguments->block = 1;
@@ -54,7 +55,7 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
       /* Here we know that state->arg_num == 0, since we
        f orce argument parsing *to end before any more arguments can
        get here. */
-      arguments->lang = arg;
+      if ((arguments->language = check_language(arg)) < 0) eperror("Wrong language"); 
       
       /* Now we consume all the rest of the arguments.
        s tate->next is the inde*x in state->argv of the
@@ -81,28 +82,12 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
       
 static struct argp argp = {options, parse_opt, args_doc, doc};
 
-void eperror(char *msg) {
-  perror(msg);
-  exit(EXIT_FAILURE);
-}
-
-
 int main(int argc, char *argv[]) {
-      
   struct arguments args;
-  args.verb = args.inlin = args.block = 0; 
-  args.jdoc = args.doxy = args.empty = 0;
-  
+  memset(&args, 0, sizeof(struct arguments));
   argp_parse(&argp, argc, argv, 0, 0, &args);
   
-  int lang;
-  if ((lang = check_language(args.lang) < 0)) eperror("Wrong language"); 
-  
-  struct options opts;
-  // get just the necessary options to avoid passing unnecessary strings to the stack
-  getOptions(&args, &opts); 
-  
-  if (args.arg_num == 1) rcom(stdin, stdout, lang, &opts); // FIFO
+  if (args.arg_num == 1) rcom(stdin, stdout, &args); // FIFO
   else {
     for (int i = 0; args.files[i]; ++i) {
       char *filename = args.files[i];
@@ -111,10 +96,10 @@ int main(int argc, char *argv[]) {
       if ((source = fopen(filename, "r")) == NULL) 
 	eperror(filename);
       
-      if ((output = fopen(TMPFILE, "w")) == NULL) 
+      if ((output = fopen(TMPFILE, "w")) == NULL)  //will it create it to working directory or executable path?
 	eperror("Can't create temporal file");
     
-      rcom(source, output, lang, &opts);
+      rcom(source, output, &args);
       
       if (fclose(source) != 0) eperror(filename);
       if (fclose(output) != 0) eperror("Can't close temporal file");
@@ -126,14 +111,11 @@ int main(int argc, char *argv[]) {
       if (rename(filename, newname) < 0) eperror("Can't rename original file"); 
       if (rename(TMPFILE, filename) < 0) eperror("Can't rename temporal file");
       
-      if (opts.verb) 
+      if (args.verbose) 
 	fprintf(stderr, "Comments successfully removed from %s. Backup file %s~ created\n", filename, filename);
-    
     }
+    fprintf(stderr, "Done.\n");
   }
   
   return 0;
-  
 }
-  
-  

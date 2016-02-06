@@ -13,3 +13,7 @@ rcom c -a main.c ```
 The program is still in Development (beta) because I haven't tested it enough to be sure it doesn't fail in edge cases.
 
 However, rcom makes a backup of the original file by default, so don't be afraid to use it.
+
+
+Files with backslash newlines may fail.
+Files with trigraphs  ??/ ??' may fail since rcom doesn't replace trigraphs by their equivalent characters.

@@ -7,12 +7,7 @@ int check_language(char *lang) {
   return -1;
 }
 
-void getOptions(struct arguments *args, struct options *opts) {
-  opts->verb = args->verb;
-  opts->inlin = args->inlin;
-  opts->block = args->block;
-  opts->jdoc = args->jdoc;
-  opts->doxy = args->doxy;
-  opts->empty = args->empty;
+void eperror(char *msg) {
+  perror(msg);
+  exit(EXIT_FAILURE);
 }
-  

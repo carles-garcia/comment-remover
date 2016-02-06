@@ -1,21 +1,20 @@
 #pragma once
 
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #define C 1
 #define JAVA 3
 
 struct arguments {
-  char *lang;
-  int verb, inlin, block, jdoc, doxy, empty, arg_num;
+  int verbose, inlin, block, jdoc, empty;
+  int doxy; //not used yet
+  int arg_num;
+  int language;
   char **files;
-};
-
-struct options {
-  int verb, inlin, block, jdoc, doxy, empty;
 };
 
 int check_language(char *lang);
 
-void getOptions(struct arguments *args, struct options *opts);
-
+void eperror(char *msg);

@@ -1,6 +1,10 @@
 #pragma once
 
-#include "parsing.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h> //isspace
 
-void rcom(FILE *source, FILE *output, int lang, struct options *opts);
+#include "parsing.h"
+
+
+void rcom(FILE *source, FILE *output, struct arguments *opts);
