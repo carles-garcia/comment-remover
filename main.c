@@ -97,7 +97,8 @@ int main(int argc, char *argv[]) {
       if ((source = fopen(filename, "r")) == NULL) 
 	eperror(filename);
       
-      char *resolved_path = realpath(filename, NULL);
+      char *resolved_path = realpath(filename, NULL); 
+      // now we are sure temp file will be created in the same path as the source file
       if (resolved_path == NULL) eperror("Failed to obtain path");
       char tmpname[strlen(resolved_path) + strlen(TMPFILE) + 1];
       strcpy(tmpname, resolved_path);
