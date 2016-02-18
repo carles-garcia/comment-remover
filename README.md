@@ -13,19 +13,19 @@ It is installed by default in /usr/local
 
 #### Examples
 
-To see all options type ```rcom --help```
+To see all options type `rcom --help`
 
 * Remove all types of comments 
 
-```rcom -a c file.c file2.c file3.c```
+`rcom -a c file.c file2.c file3.c`
 
-* Remove javadoc comments from a c file named main.c 
+* Remove javadoc comments only
 
-```rcom -j java main.java```
+`rcom -j java main.java`
 
 * Remove block comments and replace them with empty lines
 
-```rcom -be c++ file.cpp```
+`rcom -be c++ file.cpp`
 
 
 ###### Note
