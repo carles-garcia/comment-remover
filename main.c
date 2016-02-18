@@ -61,7 +61,10 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
       /* Here we know that state->arg_num == 0, since we
        force argument parsing to end before any more arguments can
        get here. */
-      if ((arguments->language = check_language(arg)) < 0) eperror("Wrong language"); 
+      if ((arguments->language = check_language(arg)) < 0) {
+	fprintf(stderr, "Wrong language. Try rcom --help\n");
+	exit(EXIT_FAILURE);
+      }
       
       /* Now we consume all the rest of the arguments.
        state->next is the index in state->argv of the
