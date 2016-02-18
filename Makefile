@@ -1,7 +1,7 @@
-
 CC = gcc
-#CFLAGS = -g -O2 -Wall -std=gnu99
-CFLAGS = -g -ggdb -Wall -std=gnu99
+CFLAGS = -g -O2 -std=gnu99
+#CFLAGS = -g -ggdb -Wall -std=gnu99
+INSTALL_PATH = /usr/local
 
 all: rcom
 
@@ -19,3 +19,9 @@ parsing.o: parsing.c
 	
 clean: 
 	rm rcom main.o rcom.o parsing.o
+
+install: rcom
+	cp -v rcom $(INSTALL_PATH)/bin
+	
+uninstall:
+	rm $(INSTALL_PATH)/bin/rcom

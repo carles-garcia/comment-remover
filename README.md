@@ -7,7 +7,9 @@ rcom makes a backup of the original file that has the same name with the charact
 
 #### Install
 
-To compile just run make in the src directory.
+`make install`
+
+It is installed by default in /usr/local
 
 #### Examples
 
@@ -17,7 +19,7 @@ To see all options type ```rcom --help```
 
 ```rcom -a c file.c file2.c file3.c```
 
-* Remove javadoc comments of comments from a c file named main.c 
+* Remove javadoc comments from a c file named main.c 
 
 ```rcom -j java main.java```
 
@@ -26,13 +28,9 @@ To see all options type ```rcom --help```
 ```rcom -be c++ file.cpp```
 
 
-
-
-###### Bugs
+###### Note
 
 * Files with trigraphs ??/ and ??' may fail since rcom doesn't replace trigraphs by their equivalent characters.
-
-
 
 
 ###### License
