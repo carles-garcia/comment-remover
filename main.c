@@ -16,7 +16,7 @@ source code files. Released under the GNU GPLv3 (see COPYING.txt)
 const char *argp_program_version = "rcom v1.1.0";
 const char *argp_program_bug_address = "https://github.com/carles-garcia/comment-remover/issues";
 static char doc[] = 
-"rcom -- a utility to remove comments and documentation from source code files";
+"rcom -- a tool to remove comments and documentation from source code files";
 
 static char args_doc[] = "c|c++|java [FILE...]";
 
