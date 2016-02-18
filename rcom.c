@@ -48,7 +48,7 @@ void rcom(FILE *source, FILE *output, struct arguments *opts) {
 	      if (opts->jdoc && buffer[j+2] == '*') {
 		comment = 1;
 		has_com = 1;
-		j += 2;
+		++j;
 	      }
 	      else if (opts->block) {
 		if (buffer[j+2] == '*') {
