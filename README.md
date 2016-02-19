@@ -1,4 +1,7 @@
 # rcom
+
+[Download rcom v1.1.0](https://github.com/carles-garcia/comment-remover/releases/tag/v1.1.0)
+
 A tool to remove comments and documentation from source code files
 
 It works officially with C, C++ and Java. It probably works too with any language that has the same type of comments.
