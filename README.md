@@ -27,10 +27,14 @@ To see all options type `rcom --help`
 
 `rcom -be c++ file.cpp`
 
+* Remove inline comments using I/O redirection
+
+`rcom -i java < file.java`
+
 
 ###### Note
 
-* Files with trigraphs ??/ and ??' may fail since rcom doesn't replace trigraphs by their equivalent characters.
+* Files with trigraphs ??/ and ??' may fail since rcom doesn't replace trigraphs with their equivalent characters.
 
 
 ###### License
