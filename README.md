@@ -1,6 +1,6 @@
 # rcom
 
-[Download rcom v1.1.0](https://github.com/carles-garcia/comment-remover/releases/tag/v1.1.0)
+[Download rcom v1.2](https://github.com/carles-garcia/comment-remover/releases/tag/v1.2)
 
 A tool to remove comments and documentation from source code files
 
